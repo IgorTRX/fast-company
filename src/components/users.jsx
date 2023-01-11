@@ -9,7 +9,6 @@ const Users = () => {
   const handleDelete = (userId) => {
     setUsers((prevState) => prevState.filter((user) => user._id !== userId))
   }
-
   //для количества users
   const renderPhrase = (number) => {
     const people = ['человек тусанет', 'человека тусанут']
