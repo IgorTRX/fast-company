@@ -1,6 +1,7 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
-const SearchStatus = (props) => {
+const SearchStatus = ({ length }) => {
   const renderPhrase = (number) => {
     const people = ['человек тусанет', 'человека тусанут']
     if (number > 100) number = number % 100
@@ -18,14 +19,15 @@ const SearchStatus = (props) => {
 
   return (
     <>
-      <span
-        className={props.length > 0 ? 'badge bg-primary' : 'badge bg-danger'}>
-        {props.length > 0
-          ? `${props.length} ${renderPhrase(props.length)} c тобой сегодня`
+      <span className={length > 0 ? 'badge bg-primary' : 'badge bg-danger'}>
+        {length > 0
+          ? `${length} ${renderPhrase(length)} c тобой сегодня`
           : 'Никто с тобой не тусанет'}
       </span>
     </>
   )
 }
-
+SearchStatus.propTypes = {
+  length: PropTypes.number.isRequired
+}
 export default SearchStatus
