@@ -16,7 +16,7 @@ module.exports = {
     }
   },
   rules: {
-    indent: ['error', 2],
+    indent: ['off', 2],
     semi: ['error', 'never'],
     'space-before-function-paren': [
       'error',
