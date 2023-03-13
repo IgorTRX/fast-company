@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { paginate } from '../utils/paginate'
-import Pagination from './pagination'
+import Pagination from '../components/pagination'
 import PropTypes from 'prop-types'
 import api from '../api/index'
-import GroupList from './groupList'
-import SearchStatus from './searchStatus'
-import UsersTable from './usersTable'
+import GroupList from '../components/groupList'
+import SearchStatus from '../components/searchStatus'
+import UsersTable from '../components/usersTable'
 import _ from 'lodash'
 
 const Users = () => {
@@ -15,7 +15,6 @@ const Users = () => {
   const [sortBy, setSortBy] = useState({ path: 'name', order: 'asc' })
   const pageSize = 8
 
-  // перенесли из App
   const [users, setUsers] = useState() // исходное начальное значение [] временно убрал
 
   useEffect(() => {
@@ -33,7 +32,6 @@ const Users = () => {
       )
     )
   }
-  // из App End
 
   useEffect(() => {
     api.professions.fetchAll().then((data) => setProfessions(data))
