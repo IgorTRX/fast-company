@@ -2,14 +2,19 @@ import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import api from '../api'
 import QualitiesList from './qualitiesList'
-import { Link } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 
-const UserPage = ({ id }) => {
+const UserPage = ({ userId }) => {
+  const history = useHistory()
   const [user, setUser] = useState()
 
   useEffect(() => {
-    api.users.getById(id).then((data) => setUser(data))
+    api.users.getById(userId).then((data) => setUser(data))
   }, [])
+
+  const handleClick = () => {
+    history.push('/users')
+  }
 
   if (user) {
     return (
@@ -19,9 +24,7 @@ const UserPage = ({ id }) => {
         <QualitiesList qualities={user.qualities} />
         <p>CompletedMeetings: {user.completedMeetings}</p>
         <h2>Rate: {user.rate}</h2>
-        <Link to={`/users`}>
-          <button>Все пользователи</button>
-        </Link>
+        <button onClick={handleClick}>Все пользователи</button>
       </>
     )
   }
@@ -29,7 +32,7 @@ const UserPage = ({ id }) => {
 }
 
 UserPage.propTypes = {
-  id: PropTypes.string.isRequired
+  userId: PropTypes.string.isRequired
 }
 
 export default UserPage
