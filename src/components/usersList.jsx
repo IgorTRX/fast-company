@@ -6,6 +6,7 @@ import api from '../api/index'
 import GroupList from './groupList'
 import SearchStatus from './searchStatus'
 import UsersTable from './usersTable'
+import TextField from './textField'
 import _ from 'lodash'
 
 const UsersList = () => {
@@ -13,12 +14,17 @@ const UsersList = () => {
   const [professions, setProfessions] = useState()
   const [selectedProf, setSelectedProf] = useState()
   const [sortBy, setSortBy] = useState({ path: 'name', order: 'asc' })
+  const [searchName, setSearchName] = useState('') // Search...
   const pageSize = 8
 
   const [users, setUsers] = useState() // исходное начальное значение [] временно убрал
 
   useEffect(() => {
     api.users.fetchAll().then((data) => setUsers(data))
+  }, [])
+
+  useEffect(() => {
+    api.professions.fetchAll().then((data) => setProfessions(data))
   }, [])
 
   const handleDelete = (userId) => {
@@ -33,9 +39,15 @@ const UsersList = () => {
     )
   }
 
+  // Search...
+  const handleSearchName = ({ target }) => {
+    setSearchName(target.value)
+    console.log(target.value)
+  }
+  // Search...
   useEffect(() => {
-    api.professions.fetchAll().then((data) => setProfessions(data))
-  }, [])
+    searchName && setSelectedProf()
+  }, [searchName])
 
   useEffect(() => {
     setCurrentPage(1)
@@ -43,6 +55,7 @@ const UsersList = () => {
 
   const handleProfessionSelect = (item) => {
     setSelectedProf(item)
+    setSearchName('') // Search...
   }
 
   const handlePageChange = (pageIndex) => {
@@ -54,10 +67,15 @@ const UsersList = () => {
   }
 
   if (users) {
+    // Search...
     const filteredUsers = selectedProf
       ? users.filter(
           (user) =>
             JSON.stringify(user.profession) === JSON.stringify(selectedProf)
+        )
+      : searchName
+      ? users.filter((user) =>
+          user.name.toLowerCase().includes(searchName.toLowerCase())
         )
       : users
 
@@ -89,6 +107,15 @@ const UsersList = () => {
           <h2>
             <SearchStatus length={count} />
           </h2>
+
+          <TextField
+            placeholder="Search..."
+            type="text"
+            name="search"
+            value={searchName}
+            onChange={handleSearchName}
+          />
+
           {count > 0 && (
             <UsersTable
               users={userCrop}
