@@ -55,6 +55,7 @@ const Login = () => {
           <form onSubmit={handleSubmit}>
             <TextField
               label="Электронная почта"
+              type="text"
               name="email"
               value={data.email}
               onChange={handleChange}

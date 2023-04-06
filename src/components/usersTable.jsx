@@ -14,6 +14,7 @@ const UsersTable = ({
 }) => {
   const columns = {
     name: {
+      path: 'name',
       name: 'Имя',
       component: (user) => <Link to={`/users/${user._id}`}>{user.name}</Link>
     },
