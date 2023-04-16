@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react'
-import { paginate } from '../utils/paginate'
-import Pagination from './pagination'
+import { paginate } from '../../../utils/paginate'
+import Pagination from '../../common/pagination'
 import PropTypes from 'prop-types'
-import api from '../api/index'
-import GroupList from './groupList'
-import SearchStatus from './searchStatus'
-import UsersTable from './usersTable'
-import TextField from './textField'
+import api from '../../../api'
+import GroupList from '../../common/groupList'
+import SearchStatus from '../../ui/searchStatus'
+import UsersTable from '../../ui/usersTable'
+import TextField from '../../common/form/textField'
 import _ from 'lodash'
 
-const UsersList = () => {
+const UsersListPage = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [professions, setProfessions] = useState()
   const [selectedProf, setSelectedProf] = useState()
   const [sortBy, setSortBy] = useState({ path: 'name', order: 'asc' })
-  const [searchName, setSearchName] = useState('') // Search...
+  const [searchQuery, setSearchQuery] = useState('') // Search...
   const pageSize = 8
 
   const [users, setUsers] = useState() // исходное начальное значение [] временно убрал
@@ -40,22 +40,19 @@ const UsersList = () => {
   }
 
   // Search...
-  const handleSearchName = ({ target }) => {
-    setSearchName(target.value)
-    console.log(target.value)
+  const handleSearchQuery = (target) => {
+    setSelectedProf()
+    setSearchQuery(target.value)
+    // console.log(target.value)
   }
-  // Search...
-  useEffect(() => {
-    searchName && setSelectedProf()
-  }, [searchName])
 
   useEffect(() => {
     setCurrentPage(1)
-  }, [selectedProf])
+  }, [selectedProf, searchQuery]) // Search...
 
   const handleProfessionSelect = (item) => {
+    searchQuery && setSearchQuery('') // Search...
     setSelectedProf(item)
-    setSearchName('') // Search...
   }
 
   const handlePageChange = (pageIndex) => {
@@ -67,15 +64,14 @@ const UsersList = () => {
   }
 
   if (users) {
-    // Search...
     const filteredUsers = selectedProf
       ? users.filter(
           (user) =>
             JSON.stringify(user.profession) === JSON.stringify(selectedProf)
         )
-      : searchName
+      : searchQuery // Search...
       ? users.filter((user) =>
-          user.name.toLowerCase().includes(searchName.toLowerCase())
+          user.name.toLowerCase().includes(searchQuery.toLowerCase())
         )
       : users
 
@@ -111,9 +107,9 @@ const UsersList = () => {
           <TextField
             placeholder="Search..."
             type="text"
-            name="search"
-            value={searchName}
-            onChange={handleSearchName}
+            name="searchQuery"
+            value={searchQuery}
+            onChange={handleSearchQuery}
           />
 
           {count > 0 && (
@@ -140,8 +136,8 @@ const UsersList = () => {
   return 'loading...'
 }
 
-UsersList.propTypes = {
+UsersListPage.propTypes = {
   users: PropTypes.array
 }
 
-export default UsersList
+export default UsersListPage

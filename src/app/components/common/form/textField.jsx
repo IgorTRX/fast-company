@@ -12,8 +12,12 @@ const TextField = ({
 }) => {
   const [showPassword, setShowPassword] = useState(false)
 
+  const handleChange = ({ target }) => {
+    onChange({ name: target.name, value: target.value })
+  }
+
   const getInputClasses = () => {
-    return 'form-control' + (error ? ' is-invalid' : '')
+    return 'form-control' + (error ? ' is-invalid' : '') // значек ошибки
   }
 
   const switchShowPassword = () => {
@@ -22,7 +26,9 @@ const TextField = ({
 
   return (
     <div className="mb-4">
-      <label htmlFor={name}>{label}</label>
+      <label htmlFor={name} className="form-label">
+        {label}
+      </label>
       <div className="input-group has-validation">
         <input
           placeholder={placeholder} // Search...
@@ -30,7 +36,7 @@ const TextField = ({
           id={name}
           name={name}
           value={value}
-          onChange={onChange}
+          onChange={handleChange}
           className={getInputClasses()}
         />
         {type === 'password' && (
@@ -42,7 +48,8 @@ const TextField = ({
             <i className={'bi bi-eye' + (showPassword ? '-slash' : '')}></i>
           </button>
         )}
-        {error && <div className="invalid-feedback">{error}</div>}
+        {/* поменял && на ? чтоб убрать лишнее закругление */}
+        {error ? <div className="invalid-feedback">{error}</div> : <div></div>}
       </div>
     </div>
   )

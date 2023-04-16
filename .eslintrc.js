@@ -22,6 +22,7 @@ module.exports = {
       'error',
       { anonymous: 'always', named: 'never' }
     ],
+    'multiline-ternary': ['off'],
     quotes: [1, 'single', { allowTemplateLiterals: true }]
     // 'react/prop-types': 'off'
   }
