@@ -12,7 +12,7 @@ const UserPage = ({ userId }) => {
 
   useEffect(() => {
     api.users.getById(userId).then((data) => setUser(data))
-  })
+  }, [])
 
   const handleClick = () => {
     history.push(`/users/${userId}/edit`)
@@ -22,7 +22,7 @@ const UserPage = ({ userId }) => {
     return (
       <>
         {edit ? (
-          <EditUserForm user={user} />
+          <EditUserForm user={user} setUser={setUser} />
         ) : (
           <div>
             <h1>{user.name}</h1>

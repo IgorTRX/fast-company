@@ -9,7 +9,7 @@ import {
 } from '../common/form'
 import { useHistory } from 'react-router-dom'
 
-const EditUserForm = ({ user }) => {
+const EditUserForm = ({ user, setUser }) => {
   // console.log(user)
   const [data, setData] = useState({
     name: user.name,
@@ -61,9 +61,10 @@ const EditUserForm = ({ user }) => {
       profession: getProfessionById(profession),
       qualities: getQualities(qualities)
     }
-    api.users.update(user._id, editedData)
-
-    history.push(`/users/${user._id}`)
+    api.users.update(user._id, editedData).then((data) => {
+      setUser(data)
+      history.push(`/users/${user._id}`)
+    })
   }
 
   const getProfessionById = (id) => {
@@ -160,7 +161,8 @@ const EditUserForm = ({ user }) => {
 }
 
 EditUserForm.propTypes = {
-  user: PropTypes.object
+  user: PropTypes.object,
+  setUser: PropTypes.func
 }
 
 export default EditUserForm
