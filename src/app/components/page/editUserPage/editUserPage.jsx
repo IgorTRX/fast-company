@@ -1,33 +1,43 @@
 import React, { useState, useEffect } from 'react'
-import api from '../../api'
-import PropTypes from 'prop-types'
+import { useHistory, useParams } from 'react-router-dom'
+import { validator } from '../../../utils/validator'
+import api from '../../../api'
 import {
   TextField,
   SelectField,
   MultiSelectField,
   RadioField
-} from '../common/form'
-import { useHistory } from 'react-router-dom'
+} from '../../common/form'
 
-const EditUserForm = ({ user, setUser }) => {
-  // console.log(user)
-  const [data, setData] = useState({
-    name: user.name,
-    email: user.email,
-    profession: user.profession._id,
-    qualities: Object.keys(user.qualities).map((key) => ({
-      label: user.qualities[key].name,
-      value: user.qualities[key]._id,
-      color: user.qualities[key].color
-    })),
-    sex: user.sex
-  })
-
+const EditUserPage = () => {
+  const { userId } = useParams()
   const history = useHistory()
-  const [qualities, setQualities] = useState()
-  const [professions, setProfessions] = useState()
 
+  const [data, setData] = useState({
+    name: '',
+    email: '',
+    profession: '',
+    qualities: [],
+    sex: 'male'
+  })
+  const [isLoading, setIsLoading] = useState(false)
+  const [professions, setProfessions] = useState({})
+  const [qualities, setQualities] = useState([])
+  const [errors, setErrors] = useState({})
+
+  // получаем данные из api
   useEffect(() => {
+    setIsLoading(true)
+    // получаем данные для полей по умолчанию
+    api.users.getById(userId).then(({ profession, qualities, ...data }) =>
+      setData((prevState) => ({
+        ...prevState,
+        ...data,
+        qualities: transformData(qualities),
+        profession: profession._id
+      }))
+    )
+    // получаем профессии
     api.professions.fetchAll().then((data) => {
       const professionsList = Object.keys(data).map((professionName) => ({
         label: data[professionName].name,
@@ -35,6 +45,7 @@ const EditUserForm = ({ user, setUser }) => {
       }))
       setProfessions(professionsList)
     })
+    // получаем качества
     api.qualities.fetchAll().then((data) => {
       const qualitiesList = Object.keys(data).map((optionName) => ({
         label: data[optionName].name,
@@ -45,27 +56,17 @@ const EditUserForm = ({ user, setUser }) => {
     })
   }, [])
 
+  const transformData = (data) => {
+    return data.map((qual) => ({ label: qual.name, value: qual._id }))
+  }
+  // меняем значения полей
   const handleChange = (target) => {
-    // console.log(target)
     setData((prevState) => ({ ...prevState, [target.name]: target.value }))
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    // console.log(data)
-    // const isValid = validate()
-    // if (!isValid) return // прерывает дальнейшее выполнение кода в методе если ошибка(!false)
-    const { profession, qualities } = data
-    const editedData = {
-      ...data,
-      profession: getProfessionById(profession),
-      qualities: getQualities(qualities)
-    }
-    api.users.update(user._id, editedData).then((data) => {
-      setUser(data)
-      history.push(`/users/${user._id}`)
-    })
-  }
+  useEffect(() => {
+    if (data._id) setIsLoading(false)
+  }, [data])
 
   const getProfessionById = (id) => {
     for (const prof of professions) {
@@ -74,6 +75,7 @@ const EditUserForm = ({ user, setUser }) => {
       }
     }
   }
+
   const getQualities = (elements) => {
     const qualitiesArray = []
     for (const elem of elements) {
@@ -90,41 +92,69 @@ const EditUserForm = ({ user, setUser }) => {
     return qualitiesArray
   }
 
-  // const handleClick = () => {
-  //   history.push(`/users/${user._id}`)
-  // }
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    const isValid = validate()
+    if (!isValid) return // прерывает дальнейшее выполнение кода в методе если ошибка(!false)
+    const { profession, qualities } = data
 
-  if (professions && qualities) {
-    return (
-      <div className="container mt-5">
-        <div className="row">
-          <div className="col-md-6 offset-md-3 shadow p-4">
-            <h3 className="mb-4">Edit</h3>
+    api.users
+      .update(userId, {
+        ...data,
+        profession: getProfessionById(profession),
+        qualities: getQualities(qualities)
+      })
+      .then((data) => history.push(`/users/${data._id}`))
+  }
+
+  const validatorConfig = {
+    email: {
+      isRequired: { message: 'Электронная почта обязательна для заполнения' },
+      isEmail: { message: 'Email введен некорректно' }
+    },
+    name: { isRequired: { message: 'Введите ваше имя' } }
+  }
+
+  useEffect(() => {
+    validate()
+  }, [data])
+
+  const validate = () => {
+    const errors = validator(data, validatorConfig)
+    setErrors(errors)
+    return Object.keys(errors).length === 0
+  }
+  // для активации кнопки
+  const isValid = Object.keys(errors).length === 0
+
+  return (
+    <div className="container mt-5">
+      <div className="row">
+        <div className="col-md-6 offset-md-3 shadow p-4">
+          {!isLoading && Object.keys(professions).length > 0 ? (
             <form onSubmit={handleSubmit}>
               <TextField
                 label="Имя"
-                type="text"
                 name="name"
                 value={data.name}
                 onChange={handleChange}
-                // error={errors.email}
+                error={errors.name}
               />
               <TextField
                 label="Электронная почта"
-                type="text"
                 name="email"
                 value={data.email}
                 onChange={handleChange}
-                // error={errors.password}
+                error={errors.email}
               />
               <SelectField
-                label="Выберите вашу профессию"
+                label="Выбери свою профессию"
                 name="profession"
                 value={data.profession}
                 onChange={handleChange}
                 defaultOption="Choose..."
                 options={professions}
-                // error={errors.profession}
+                error={errors.profession}
               />
               <RadioField
                 label="Выберите ваш пол"
@@ -146,23 +176,19 @@ const EditUserForm = ({ user, setUser }) => {
               />
               <button
                 type="submit"
-                // disabled={!isValid}
+                disabled={!isValid}
                 className="btn btn-primary w-100 mx-auto"
               >
                 Обновить
               </button>
             </form>
-          </div>
+          ) : (
+            'Loading...'
+          )}
         </div>
       </div>
-    )
-  }
-  return 'Loading...'
+    </div>
+  )
 }
 
-EditUserForm.propTypes = {
-  user: PropTypes.object,
-  setUser: PropTypes.func
-}
-
-export default EditUserForm
+export default EditUserPage

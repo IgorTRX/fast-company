@@ -28,7 +28,6 @@ const RegisterForm = () => {
         value: data[professionName]._id
       }))
       setProfessions(professionsList)
-      // console.log(professionsList)
     })
     api.qualities.fetchAll().then((data) => {
       const qualitiesList = Object.keys(data).map((optionName) => ({
@@ -41,7 +40,6 @@ const RegisterForm = () => {
   }, [])
 
   const handleChange = (target) => {
-    console.log(target)
     setData((prevState) => ({ ...prevState, [target.name]: target.value }))
   }
 

@@ -2,12 +2,10 @@ import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import api from '../../../api'
 import Qualities from '../../ui/qualities'
-import { useHistory, useParams } from 'react-router-dom'
-import EditUserForm from '../../ui/editUserForm'
+import { useHistory } from 'react-router-dom'
 
 const UserPage = ({ userId }) => {
   const history = useHistory()
-  const { edit } = useParams()
   const [user, setUser] = useState()
 
   useEffect(() => {
@@ -15,25 +13,19 @@ const UserPage = ({ userId }) => {
   }, [])
 
   const handleClick = () => {
-    history.push(`/users/${userId}/edit`)
+    history.push(history.location.pathname + '/edit')
   }
 
   if (user) {
     return (
-      <>
-        {edit ? (
-          <EditUserForm user={user} setUser={setUser} />
-        ) : (
-          <div>
-            <h1>{user.name}</h1>
-            <h2>Профессия: {user.profession.name}</h2>
-            <Qualities qualities={user.qualities} />
-            <p>CompletedMeetings: {user.completedMeetings}</p>
-            <h2>Rate: {user.rate}</h2>
-            <button onClick={handleClick}>Изменить</button>
-          </div>
-        )}
-      </>
+      <div>
+        <h1>{user.name}</h1>
+        <h2>Профессия: {user.profession.name}</h2>
+        <Qualities qualities={user.qualities} />
+        <p>CompletedMeetings: {user.completedMeetings}</p>
+        <h2>Rate: {user.rate}</h2>
+        <button onClick={handleClick}>Изменить</button>
+      </div>
     )
   }
   return 'Loading...'
