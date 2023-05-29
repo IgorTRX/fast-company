@@ -87,6 +87,7 @@ const RegisterForm = () => {
     const isValid = validate()
     if (!isValid) return // прерывает дальнейшее выполнение кода в методе если ошибка(!false)
     const { profession, qualities } = data
+
     console.log({
       ...data,
       profession: getProfessionById(profession),
