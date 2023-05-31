@@ -8,6 +8,7 @@ import {
   MultiSelectField,
   RadioField
 } from '../../common/form'
+import BackHistoryButton from '../../common/backButton'
 
 const EditUserPage = () => {
   const { userId } = useParams()
@@ -129,6 +130,7 @@ const EditUserPage = () => {
 
   return (
     <div className="container mt-5">
+      <BackHistoryButton />
       <div className="row">
         <div className="col-md-6 offset-md-3 shadow p-4">
           {!isLoading && Object.keys(professions).length > 0 ? (
