@@ -61,8 +61,8 @@ const remove = (id) =>
     window.setTimeout(function () {
       const comments = JSON.parse(localStorage.getItem('comments'))
       const newComments = comments.filter((x) => x._id !== id)
-      console.log(id)
-      console.log(newComments)
+      console.log('remove', id)
+      console.log('newComments', newComments)
       localStorage.setItem('comments', JSON.stringify(newComments))
       resolve(id)
     }, 200)
