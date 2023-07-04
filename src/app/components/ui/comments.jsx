@@ -8,8 +8,6 @@ const Comments = () => {
   const { userId } = useParams()
   const [comments, setComments] = useState([])
 
-  console.log(comments)
-
   useEffect(() => {
     API.comments.fetchCommentsForUser(userId).then((data) => setComments(data))
   }, [])
