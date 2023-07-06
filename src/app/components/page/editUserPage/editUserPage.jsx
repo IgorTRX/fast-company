@@ -13,6 +13,7 @@ import BackHistoryButton from '../../common/backButton'
 const EditUserPage = () => {
   const { userId } = useParams()
   const history = useHistory()
+  // console.log(userId)
 
   const [data, setData] = useState({
     name: '',

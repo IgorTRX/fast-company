@@ -8,6 +8,7 @@ import SearchStatus from '../../ui/searchStatus'
 import UsersTable from '../../ui/usersTable'
 import TextField from '../../common/form/textField'
 import _ from 'lodash'
+import { useUser } from '../../../hooks/useUsers'
 
 const UsersListPage = () => {
   const [currentPage, setCurrentPage] = useState(1)
@@ -17,33 +18,33 @@ const UsersListPage = () => {
   const [searchQuery, setSearchQuery] = useState('') // Search...
   const pageSize = 8
 
-  const [users, setUsers] = useState() // исходное начальное значение [] временно убрал
-
-  useEffect(() => {
-    api.users.fetchAll().then((data) => setUsers(data))
-  }, [])
+  const { users } = useUser()
+  console.log(users)
 
   useEffect(() => {
     api.professions.fetchAll().then((data) => setProfessions(data))
   }, [])
 
   const handleDelete = (userId) => {
-    setUsers(users.filter((user) => user._id !== userId))
+    // setUsers(users.filter((user) => user._id !== userId))
+    console.log(userId)
   }
 
   const handleToggleBookMark = (id) => {
-    setUsers(
-      users.map((user) =>
-        user._id === id ? { ...user, bookmark: !user.bookmark } : user
-      )
-    )
+    const newArray = users.map((user) => {
+      if (user._id === id) {
+        return { ...user, bookmark: !user.bookmark }
+      }
+      return user
+    })
+    // setUsers(newArray)
+    console.log(newArray)
   }
 
   // Search...
   const handleSearchQuery = (target) => {
     setSelectedProf()
     setSearchQuery(target.value)
-    // console.log(target.value)
   }
 
   useEffect(() => {
