@@ -8,7 +8,6 @@ import { UserProvaider } from '../hooks/useUsers'
 const Users = () => {
   const params = useParams()
   const { userId, edit } = params
-  console.log(userId)
 
   return (
     <>

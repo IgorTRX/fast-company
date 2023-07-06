@@ -36,10 +36,7 @@ export const QualitiesProvaider = ({ children }) => {
   }
 
   function getQuality(id) {
-    const userQualities = id.map((item) => {
-      return qualities.find((quality) => quality._id === item)
-    })
-    return userQualities
+    return qualities.find((quality) => quality._id === id)
   }
 
   function errorCatcher(error) {

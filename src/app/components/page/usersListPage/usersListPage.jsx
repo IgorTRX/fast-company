@@ -19,7 +19,6 @@ const UsersListPage = () => {
   const pageSize = 8
 
   const { users } = useUser()
-  console.log(users)
 
   useEffect(() => {
     api.professions.fetchAll().then((data) => setProfessions(data))
