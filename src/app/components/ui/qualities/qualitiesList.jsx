@@ -1,19 +1,26 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Quality from './quality'
+import { useQualities } from '../../../hooks/useQualities'
 
-const QualitiesList = ({ qualities }) => {
-  return (
-    <>
-      {qualities.map((qualiti) => (
-        <Quality {...qualiti} key={qualiti._id} />
-      ))}
-    </>
-  )
+const QualitiesList = ({ id }) => {
+  const { isLoading, getQuality } = useQualities()
+
+  const userQualities = getQuality(id)
+
+  if (!isLoading) {
+    return (
+      <>
+        {userQualities.map((quality) => (
+          <Quality {...quality} key={quality._id} />
+        ))}
+      </>
+    )
+  } else return 'Loading...'
 }
 
 QualitiesList.propTypes = {
-  qualities: PropTypes.array.isRequired
+  id: PropTypes.PropTypes.arrayOf(PropTypes.string)
 }
 
 export default QualitiesList
