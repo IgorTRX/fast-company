@@ -1,6 +1,5 @@
-import httpService from './http.cervice'
+import httpService from './http.service'
 
-// endpoint
 const qualityEndpoint = 'quality/'
 
 const qualityService = {

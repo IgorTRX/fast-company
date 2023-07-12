@@ -1,4 +1,4 @@
-import httpService from './http.cervice'
+import httpService from './http.service'
 
 // endpoint
 const userEndpoint = 'user/'
