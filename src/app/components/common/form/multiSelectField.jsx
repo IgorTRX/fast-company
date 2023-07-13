@@ -9,6 +9,7 @@ const MultiSelectField = ({ options, onChange, defaultValue, name, label }) => {
       : options
 
   const handleChange = (value) => {
+    value = Array.isArray(value) ? value.map((quality) => quality.value) : value
     onChange({ name, value })
   }
 

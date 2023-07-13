@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { validator } from '../../utils/validator'
 import TextField from '../common/form/textField'
-import api from '../../api'
 import SelectField from '../common/form/selectField'
 import RadioField from '../common/form/radioField'
 import MultiSelectField from '../common/form/multiSelectField'
 import CheckBoxField from '../common/form/checkBoxField'
+import { useQualities } from '../../hooks/useQualities'
+import { useProfession } from '../../hooks/useProfession'
 
 const RegisterForm = () => {
   const [data, setData] = useState({
@@ -17,27 +18,19 @@ const RegisterForm = () => {
     licence: false
   })
 
-  const [qualities, setQualities] = useState([])
-  const [professions, setProfessions] = useState([])
-  const [errors, setErrors] = useState({})
+  const { qualities } = useQualities()
+  const qualitiesList = qualities.map((qual) => ({
+    label: qual.name,
+    value: qual._id
+  }))
 
-  useEffect(() => {
-    api.professions.fetchAll().then((data) => {
-      const professionsList = Object.keys(data).map((professionName) => ({
-        label: data[professionName].name,
-        value: data[professionName]._id
-      }))
-      setProfessions(professionsList)
-    })
-    api.qualities.fetchAll().then((data) => {
-      const qualitiesList = Object.keys(data).map((optionName) => ({
-        label: data[optionName].name,
-        value: data[optionName]._id,
-        color: data[optionName].color
-      }))
-      setQualities(qualitiesList)
-    })
-  }, [])
+  const { professions } = useProfession()
+  const professionsList = professions.map((prof) => ({
+    label: prof.name,
+    value: prof._id
+  }))
+
+  const [errors, setErrors] = useState({})
 
   const handleChange = (target) => {
     setData((prevState) => ({ ...prevState, [target.name]: target.value }))
@@ -86,36 +79,7 @@ const RegisterForm = () => {
     e.preventDefault()
     const isValid = validate()
     if (!isValid) return // прерывает дальнейшее выполнение кода в методе если ошибка(!false)
-    const { profession, qualities } = data
-
-    console.log({
-      ...data,
-      profession: getProfessionById(profession),
-      qualities: getQualities(qualities)
-    })
-  }
-
-  const getProfessionById = (id) => {
-    for (const prof of professions) {
-      if (prof.value === id) {
-        return { _id: prof.value, name: prof.label }
-      }
-    }
-  }
-  const getQualities = (elements) => {
-    const qualitiesArray = []
-    for (const elem of elements) {
-      for (const quality in qualities) {
-        if (elem.value === qualities[quality].value) {
-          qualitiesArray.push({
-            _id: qualities[quality].value,
-            name: qualities[quality].label,
-            color: qualities[quality].color
-          })
-        }
-      }
-    }
-    return qualitiesArray
+    console.log(data)
   }
 
   return (
@@ -142,7 +106,7 @@ const RegisterForm = () => {
         value={data.profession}
         onChange={handleChange}
         defaultOption="Choose..."
-        options={professions}
+        options={professionsList}
         error={errors.profession}
       />
       <RadioField
@@ -157,7 +121,7 @@ const RegisterForm = () => {
         onChange={handleChange}
       />
       <MultiSelectField
-        options={qualities}
+        options={qualitiesList}
         onChange={handleChange}
         defaultValue={data.qualities}
         name="qualities"
