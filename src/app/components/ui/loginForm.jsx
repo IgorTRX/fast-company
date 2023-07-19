@@ -10,26 +10,19 @@ const LoginForm = () => {
   const { signIn } = useAuth()
   const [data, setData] = useState({ email: '', password: '', stayOn: false })
   const [errors, setErrors] = useState({})
+  const [enterError, setEnterError] = useState(null)
 
   const handleChange = (target) => {
     setData((prevState) => ({ ...prevState, [target.name]: target.value }))
+    setEnterError(null)
   }
 
   const validatorConfig = {
     email: {
-      isRequired: { message: 'Электронная почта обязательна для заполнения' },
-      isEmail: { message: 'Email введен некорректно' }
+      isRequired: { message: 'Поле обязательно для заполнения' }
     },
     password: {
-      isRequired: { message: 'Пароль обязателен для заполнения' },
-      isCapitalLetter: {
-        message: 'Пароль должен содержать минимум одну заглавную букву'
-      },
-      isContainDigit: { message: 'Пароль должен содержать минимум одно число' },
-      isMinAmountNumbers: {
-        message: 'Пароль должен составлять минимум из 8 символов',
-        value: 8
-      }
+      isRequired: { message: 'Поле обязательно для заполнения' }
     }
   }
 
@@ -53,7 +46,7 @@ const LoginForm = () => {
       await signIn(data)
       history.push('/')
     } catch (error) {
-      setErrors(error)
+      setEnterError(error.message)
     }
   }
 
@@ -80,9 +73,10 @@ const LoginForm = () => {
         Оставаться в системе
       </CheckBoxField>
 
+      {enterError && <p className="text-danger">{enterError}</p>}
       <button
         type="submit"
-        disabled={!isValid}
+        disabled={!isValid || enterError}
         className="btn btn-primary w-100 mx-auto"
       >
         Submit
