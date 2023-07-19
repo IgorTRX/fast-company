@@ -17,7 +17,6 @@ export const AuthProvaider = ({ children }) => {
   const [currentUser, setUser] = useState({})
   const [error, setError] = useState(null)
 
-  // метод регистрации пользователя
   async function signUp({ email, password, ...rest }) {
     const url = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${process.env.REACT_APP_FIREBASE_KEY}`
 
@@ -43,7 +42,6 @@ export const AuthProvaider = ({ children }) => {
     }
   }
 
-  // метод занесения данных о пользователе в DB Firebase
   async function createUser(data) {
     try {
       const { content } = await userService.create(data)

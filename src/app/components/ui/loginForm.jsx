@@ -39,14 +39,13 @@ const LoginForm = () => {
     return Object.keys(errors).length === 0
   }
 
-  // для активации кнопки
   const isValid = Object.keys(errors).length === 0
 
   const handleSubmit = (e) => {
     e.preventDefault()
     const isValid = validate()
-    if (!isValid) return // прерывает дальнейшее выполнение кода в методе если ошибка(!false)
-    console.log(data) // если данные отправляются
+    if (!isValid) return
+    console.log(data)
   }
 
   return (
