@@ -7,8 +7,11 @@ import MultiSelectField from '../common/form/multiSelectField'
 import CheckBoxField from '../common/form/checkBoxField'
 import { useQualities } from '../../hooks/useQualities'
 import { useProfession } from '../../hooks/useProfession'
+import { useAuth } from '../../hooks/useAuth'
+import { useHistory } from 'react-router-dom'
 
 const RegisterForm = () => {
+  const history = useHistory()
   const [data, setData] = useState({
     email: '',
     password: '',
@@ -18,6 +21,7 @@ const RegisterForm = () => {
     licence: false
   })
 
+  const { signUp } = useAuth()
   const { qualities } = useQualities()
   const qualitiesList = qualities.map((qual) => ({
     label: qual.name,
@@ -75,11 +79,16 @@ const RegisterForm = () => {
   // для активации кнопки
   const isValid = Object.keys(errors).length === 0
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     const isValid = validate()
     if (!isValid) return // прерывает дальнейшее выполнение кода в методе если ошибка(!false)
-    console.log(data)
+    try {
+      await signUp(data)
+      history.push('/')
+    } catch (error) {
+      setErrors(error)
+    }
   }
 
   return (
