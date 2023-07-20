@@ -23,7 +23,9 @@ http.interceptors.request.use(
 
 // трансформация ответа
 function transformData(data) {
-  return data ? Object.keys(data).map((key) => ({ ...data[key] })) : []
+  return data && !data._id
+    ? Object.keys(data).map((key) => ({ ...data[key] }))
+    : data
 }
 // перехватчик ответа
 http.interceptors.response.use(
