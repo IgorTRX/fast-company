@@ -29,6 +29,11 @@ http.interceptors.request.use(
           localId: data.user_id
         })
       }
+      const accessToken = localStorageService.getAccessToken()
+      console.log(config)
+      if (accessToken) {
+        config.params = { ...config.params, auth: accessToken }
+      }
     }
     return config
   },
