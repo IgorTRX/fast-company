@@ -30,7 +30,6 @@ http.interceptors.request.use(
         })
       }
       const accessToken = localStorageService.getAccessToken()
-      console.log(config)
       if (accessToken) {
         config.params = { ...config.params, auth: accessToken }
       }

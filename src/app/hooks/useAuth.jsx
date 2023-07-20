@@ -19,7 +19,7 @@ export const useAuth = () => {
 }
 
 export const AuthProvaider = ({ children }) => {
-  const [currentUser, setUser] = useState({})
+  const [currentUser, setUser] = useState()
   const [error, setError] = useState(null)
 
   function randomInt(min, max) {
