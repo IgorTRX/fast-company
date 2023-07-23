@@ -4,6 +4,7 @@ import axios from 'axios'
 import userService from '../service/user.service'
 import { toast } from 'react-toastify'
 import localStorageService, { setTokens } from '../service/localStorage.service'
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 
 export const httpAuth = axios.create({
   baseURL: 'https://identitytoolkit.googleapis.com/v1/',
@@ -22,6 +23,7 @@ export const AuthProvaider = ({ children }) => {
   const [currentUser, setUser] = useState()
   const [error, setError] = useState(null)
   const [isLoading, setLoading] = useState(true)
+  const history = useHistory()
 
   function randomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min)
@@ -78,6 +80,12 @@ export const AuthProvaider = ({ children }) => {
     }
   }
 
+  function logOut() {
+    localStorageService.removeAuthData()
+    setUser(null)
+    history.push('/')
+  }
+
   async function createUser(data) {
     try {
       const { content } = await userService.create(data)
@@ -118,7 +126,7 @@ export const AuthProvaider = ({ children }) => {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ signUp, signIn, currentUser }}>
+    <AuthContext.Provider value={{ signUp, signIn, logOut, currentUser }}>
       {!isLoading ? children : 'Loading...'}
     </AuthContext.Provider>
   )
