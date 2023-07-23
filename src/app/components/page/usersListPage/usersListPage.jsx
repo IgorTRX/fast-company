@@ -2,27 +2,23 @@ import React, { useState, useEffect } from 'react'
 import { paginate } from '../../../utils/paginate'
 import Pagination from '../../common/pagination'
 import PropTypes from 'prop-types'
-import api from '../../../api'
 import GroupList from '../../common/groupList'
 import SearchStatus from '../../ui/searchStatus'
 import UsersTable from '../../ui/usersTable'
 import TextField from '../../common/form/textField'
 import _ from 'lodash'
 import { useUser } from '../../../hooks/useUsers'
+import { useProfession } from '../../../hooks/useProfession'
 
 const UsersListPage = () => {
   const [currentPage, setCurrentPage] = useState(1)
-  const [professions, setProfessions] = useState()
   const [selectedProf, setSelectedProf] = useState()
   const [sortBy, setSortBy] = useState({ path: 'name', order: 'asc' })
   const [searchQuery, setSearchQuery] = useState('') // Search...
   const pageSize = 8
 
   const { users } = useUser()
-
-  useEffect(() => {
-    api.professions.fetchAll().then((data) => setProfessions(data))
-  }, [])
+  const { isLoading: professionsLoading, professions } = useProfession()
 
   const handleDelete = (userId) => {
     // setUsers(users.filter((user) => user._id !== userId))
@@ -87,7 +83,7 @@ const UsersListPage = () => {
 
     return (
       <div className="d-flex">
-        {professions && (
+        {professions && !professionsLoading && (
           <div className="d-flex flex-column flex-shrink-0 p-3">
             <GroupList
               selectedItem={selectedProf}
