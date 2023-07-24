@@ -5,6 +5,7 @@ import QualitiesCard from '../../ui/qualitiesCard'
 import MeetingsCard from '../../ui/meetingsCard'
 import Comments from '../../ui/comments'
 import { useUser } from '../../../hooks/useUsers'
+import { CommentsProvaider } from '../../../hooks/useCommets'
 
 const UserPage = ({ userId }) => {
   const { getUserById } = useUser()
@@ -20,7 +21,9 @@ const UserPage = ({ userId }) => {
             <MeetingsCard value={user.completedMeetings} />
           </div>
           <div className="col-md-8">
-            <Comments />
+            <CommentsProvaider>
+              <Comments />
+            </CommentsProvaider>
           </div>
         </div>
       </div>
