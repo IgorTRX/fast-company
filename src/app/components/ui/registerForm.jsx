@@ -91,8 +91,12 @@ const RegisterForm = () => {
     e.preventDefault()
     const isValid = validate()
     if (!isValid) return
+    const newData = {
+      ...data,
+      qualities: data.qualities.map((qual) => qual.value)
+    }
     try {
-      await signUp(data)
+      await signUp(newData)
       history.push('/')
     } catch (error) {
       setErrors(error)

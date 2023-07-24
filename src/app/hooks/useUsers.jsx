@@ -43,9 +43,14 @@ export const UserProvaider = ({ children }) => {
     const { message } = error.response.data
     setError(message)
   }
+
+  function getUserById(id) {
+    return users.find((user) => user._id === id)
+  }
+
   // т.к. у нас все данные пользователей отображаются на одной странице и пользователи являются тем от чего у нас зависят все остальные данные, поэтому мы можем сделать глобальную загрузку здесь
   return (
-    <UserContext.Provider value={{ users }}>
+    <UserContext.Provider value={{ users, getUserById }}>
       {!isLoading ? children : 'Loading...'}
     </UserContext.Provider>
   )
