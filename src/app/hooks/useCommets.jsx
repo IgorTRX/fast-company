@@ -21,7 +21,7 @@ export const CommentsProvaider = ({ children }) => {
 
   useEffect(() => {
     getComments()
-  }, [])
+  }, [userId])
 
   async function createComment(data) {
     const comment = {
@@ -33,7 +33,7 @@ export const CommentsProvaider = ({ children }) => {
     }
     try {
       const { content } = await commentService.createComment(comment)
-      console.log(content)
+      setComments((prevState) => [...prevState, content])
     } catch (error) {
       errorCatcher(error)
     }
@@ -42,7 +42,6 @@ export const CommentsProvaider = ({ children }) => {
   async function getComments() {
     try {
       const { content } = await commentService.getComments(userId)
-      console.log(content)
       setComments(content)
     } catch (error) {
       errorCatcher(error)
