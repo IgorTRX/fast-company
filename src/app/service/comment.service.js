@@ -15,6 +15,10 @@ const commentService = {
       params: { orderBy: '"pageId"', equalTo: `"${pageId}"` }
     })
     return data
+  },
+  removeComment: async (commentId) => {
+    const { data } = await httpService.delete(commentEndpoint + commentId)
+    return data
   }
 }
 
