@@ -14,12 +14,10 @@ export const UserProvaider = ({ children }) => {
   const [error, setError] = useState(null)
   const [isLoading, setLoading] = useState(true)
 
-  // вызываем функцию получения users
   useEffect(() => {
     getUsers()
   }, [])
 
-  // обработка ошибок 2
   useEffect(() => {
     if (error !== null) {
       toast(error)
@@ -27,7 +25,6 @@ export const UserProvaider = ({ children }) => {
     }
   }, [error])
 
-  // получаем users
   async function getUsers() {
     try {
       const { content } = await userService.get()
@@ -38,7 +35,6 @@ export const UserProvaider = ({ children }) => {
     }
   }
 
-  // обработка ошибок 1
   function errorCatcher(error) {
     const { message } = error.response.data
     setError(message)
@@ -48,15 +44,13 @@ export const UserProvaider = ({ children }) => {
     return users.find((user) => user._id === id)
   }
 
-  // т.к. у нас все данные пользователей отображаются на одной странице и пользователи являются тем от чего у нас зависят все остальные данные, поэтому мы можем сделать глобальную загрузку здесь
   return (
-    <UserContext.Provider value={{ users, getUserById }}>
+    <UserContext.Provider value={{ users, getUsers, getUserById }}>
       {!isLoading ? children : 'Loading...'}
     </UserContext.Provider>
   )
 }
 
-// типизация входящих
 UserProvaider.propTypes = {
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node),
