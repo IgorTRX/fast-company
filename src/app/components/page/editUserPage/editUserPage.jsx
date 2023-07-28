@@ -11,23 +11,17 @@ import BackHistoryButton from '../../common/backButton'
 import { useAuth } from '../../../hooks/useAuth'
 import { useProfession } from '../../../hooks/useProfession'
 import { useQualities } from '../../../hooks/useQualities'
-import { useUser } from '../../../hooks/useUsers'
+// import { useUser } from '../../../hooks/useUsers'
 
 const EditUserPage = () => {
   const history = useHistory()
-  const [data, setData] = useState({
-    name: '',
-    email: '',
-    profession: '',
-    qualities: [],
-    sex: 'male'
-  })
-  const [isLoading, setIsLoading] = useState(false)
+  const [data, setData] = useState()
+  const [isLoading, setIsLoading] = useState(true)
   const [errors, setErrors] = useState({})
-  const { currentUser, editUser } = useAuth()
+  const { currentUser, updateUserData } = useAuth()
   const { isLoading: qualitiesLoading, qualities } = useQualities()
   const { isLoading: professionsLoading, professions } = useProfession()
-  const { getUsers } = useUser()
+  // const { getUsers } = useUser()
 
   const qualitiesList = qualities.map((qual) => ({
     label: qual.name,
@@ -38,29 +32,26 @@ const EditUserPage = () => {
     value: prof._id
   }))
 
-  if (!qualitiesLoading && !professionsLoading && !isLoading) {
-    defaultFields()
-    setIsLoading(true)
-  }
+  useEffect(() => {
+    if (!qualitiesLoading && !professionsLoading && currentUser && !data) {
+      setData({
+        ...currentUser,
+        qualities: getQualitiesListById(currentUser.qualities)
+      })
+    }
+  }, [qualitiesLoading, professionsLoading, currentUser, data])
 
-  function defaultFields() {
-    setData((prevState) => ({
-      ...prevState,
-      ...data,
-      name: currentUser.name,
-      email: currentUser.email,
-      qualities: currentUserQualities(qualitiesList),
-      profession: currentUser.profession,
-      sex: currentUser.sex
-    }))
-  }
+  useEffect(() => {
+    if (data && isLoading) setIsLoading(false)
+  }, [data])
 
-  function currentUserQualities(elements) {
+  function getQualitiesListById(qualitisIds) {
     const qualitiesArray = []
-    for (const elem of elements) {
-      for (const index in currentUser.qualities) {
-        if (elem.value === currentUser.qualities[index]) {
-          qualitiesArray.push(elem)
+    for (const qualId of qualitisIds) {
+      for (const quality of qualitiesList) {
+        if (quality.value === qualId) {
+          qualitiesArray.push(quality)
+          break
         }
       }
     }
@@ -75,14 +66,11 @@ const EditUserPage = () => {
     e.preventDefault()
     const isValid = validate()
     if (!isValid) return
-    const newData = {
-      ...data,
-      _id: currentUser._id,
-      qualities: data.qualities.map((qual) => qual.value)
-    }
     try {
-      await editUser(newData)
-      await getUsers()
+      await updateUserData({
+        ...data,
+        qualities: data.qualities.map((qual) => qual.value)
+      })
       history.push(`/users/${currentUser._id}`)
     } catch (error) {
       setErrors(error)
@@ -114,7 +102,7 @@ const EditUserPage = () => {
       <BackHistoryButton />
       <div className="row">
         <div className="col-md-6 offset-md-3 shadow p-4">
-          {isLoading ? (
+          {!isLoading ? (
             <form onSubmit={handleSubmit}>
               <TextField
                 label="Имя"

@@ -98,10 +98,10 @@ export const AuthProvaider = ({ children }) => {
     }
   }
 
-  async function editUser(data) {
+  async function updateUserData(data) {
     try {
-      await userService.edit(data)
-      await getUserData()
+      const { content } = await userService.update(data)
+      setUser(content)
     } catch (error) {
       errorCatcher(error)
     }
@@ -139,7 +139,7 @@ export const AuthProvaider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ signUp, signIn, logOut, editUser, currentUser }}
+      value={{ signUp, signIn, logOut, updateUserData, currentUser }}
     >
       {!isLoading ? children : 'Loading...'}
     </AuthContext.Provider>
