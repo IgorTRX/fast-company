@@ -21,7 +21,6 @@ const EditUserPage = () => {
   const { currentUser, updateUserData } = useAuth()
   const { isLoading: qualitiesLoading, qualities } = useQualities()
   const { isLoading: professionsLoading, professions } = useProfession()
-  // const { getUsers } = useUser()
 
   const qualitiesList = qualities.map((qual) => ({
     label: qual.name,
