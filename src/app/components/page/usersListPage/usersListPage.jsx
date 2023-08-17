@@ -8,8 +8,12 @@ import UsersTable from '../../ui/usersTable'
 import TextField from '../../common/form/textField'
 import _ from 'lodash'
 import { useUser } from '../../../hooks/useUsers'
-import { useProfession } from '../../../hooks/useProfession'
 import { useAuth } from '../../../hooks/useAuth'
+import { useSelector } from 'react-redux'
+import {
+  getProfessions,
+  getProfessionsLoadingStatus
+} from '../../../store/professions'
 
 const UsersListPage = () => {
   const [currentPage, setCurrentPage] = useState(1)
@@ -19,7 +23,8 @@ const UsersListPage = () => {
   const pageSize = 8
 
   const { users } = useUser()
-  const { isLoading: professionsLoading, professions } = useProfession()
+  const professions = useSelector(getProfessions())
+  const professionsLoading = useSelector(getProfessionsLoadingStatus())
   const { currentUser } = useAuth()
 
   const handleDelete = (userId) => {

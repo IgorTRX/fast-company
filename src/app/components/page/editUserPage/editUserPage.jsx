@@ -9,12 +9,15 @@ import {
 } from '../../common/form'
 import BackHistoryButton from '../../common/backButton'
 import { useAuth } from '../../../hooks/useAuth'
-import { useProfession } from '../../../hooks/useProfession'
 import { useSelector } from 'react-redux'
 import {
   getQualities,
   getQualitiesLoadingStatus
 } from '../../../store/qualities'
+import {
+  getProfessions,
+  getProfessionsLoadingStatus
+} from '../../../store/professions'
 
 const EditUserPage = () => {
   const history = useHistory()
@@ -22,10 +25,12 @@ const EditUserPage = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [errors, setErrors] = useState({})
   const { currentUser, updateUserData } = useAuth()
-  const { isLoading: professionsLoading, professions } = useProfession()
 
   const qualities = useSelector(getQualities())
   const qualitiesLoading = useSelector(getQualitiesLoadingStatus())
+
+  const professions = useSelector(getProfessions())
+  const professionsLoading = useSelector(getProfessionsLoadingStatus())
 
   const qualitiesList = qualities.map((qual) => ({
     label: qual.name,
