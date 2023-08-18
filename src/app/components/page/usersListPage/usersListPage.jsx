@@ -7,13 +7,13 @@ import SearchStatus from '../../ui/searchStatus'
 import UsersTable from '../../ui/usersTable'
 import TextField from '../../common/form/textField'
 import _ from 'lodash'
-import { useUser } from '../../../hooks/useUsers'
 import { useAuth } from '../../../hooks/useAuth'
 import { useSelector } from 'react-redux'
 import {
   getProfessions,
   getProfessionsLoadingStatus
 } from '../../../store/professions'
+import { getUsers } from '../../../store/users'
 
 const UsersListPage = () => {
   const [currentPage, setCurrentPage] = useState(1)
@@ -22,7 +22,7 @@ const UsersListPage = () => {
   const [searchQuery, setSearchQuery] = useState('') // Search...
   const pageSize = 8
 
-  const { users } = useUser()
+  const users = useSelector(getUsers())
   const professions = useSelector(getProfessions())
   const professionsLoading = useSelector(getProfessionsLoadingStatus())
   const { currentUser } = useAuth()
