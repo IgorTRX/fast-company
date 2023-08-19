@@ -7,13 +7,12 @@ import SearchStatus from '../../ui/searchStatus'
 import UsersTable from '../../ui/usersTable'
 import TextField from '../../common/form/textField'
 import _ from 'lodash'
-import { useAuth } from '../../../hooks/useAuth'
 import { useSelector } from 'react-redux'
 import {
   getProfessions,
   getProfessionsLoadingStatus
 } from '../../../store/professions'
-import { getUsers } from '../../../store/users'
+import { getCurrentUserId, getUsers } from '../../../store/users'
 
 const UsersListPage = () => {
   const [currentPage, setCurrentPage] = useState(1)
@@ -25,7 +24,7 @@ const UsersListPage = () => {
   const users = useSelector(getUsers())
   const professions = useSelector(getProfessions())
   const professionsLoading = useSelector(getProfessionsLoadingStatus())
-  const { currentUser } = useAuth()
+  const currentUserId = useSelector(getCurrentUserId())
 
   const handleDelete = (userId) => {
     // setUsers(users.filter((user) => user._id !== userId))
@@ -77,7 +76,7 @@ const UsersListPage = () => {
           user.name.toLowerCase().includes(searchQuery.toLowerCase())
         )
       : data
-    return filteredUsers.filter((user) => user._id !== currentUser._id)
+    return filteredUsers.filter((user) => user._id !== currentUserId)
   }
   const filteredUsers = filterUsers(users)
   const count = filteredUsers.length

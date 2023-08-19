@@ -1,4 +1,5 @@
 import { createAction, createSlice } from '@reduxjs/toolkit'
+import { toast } from 'react-toastify'
 import userService from '../service/user.service'
 import authService from '../service/auth.service'
 import localStorageService from '../service/localStorage.service'
@@ -12,7 +13,8 @@ const usersSlice = createSlice({
     isLoading: true,
     error: null,
     auth: null,
-    isLoggedIn: false
+    isLoggedIn: false,
+    dataLoaded: false
   },
   reducers: {
     usersRequested(state) {
@@ -20,11 +22,13 @@ const usersSlice = createSlice({
     },
     usersReceived(state, action) {
       state.entities = action.payload
+      state.dataLoaded = true
       state.isLoading = false
     },
     usersRequestFailed(state, action) {
       state.error = action.payload
       state.isLoading = false
+      toast(`USERS: ${state.error}`)
     },
     authRequestSuccess(state, action) {
       state.auth = action.payload
@@ -130,5 +134,7 @@ export const getUserById = (id) => (state) => {
 }
 
 export const getIsLoggedIn = () => (state) => state.users.isLoggedIn
+export const getDataStatus = () => (state) => state.users.dataLoaded
+export const getCurrentUserId = () => (state) => state.users.auth.userId
 
 export default usersReducer
