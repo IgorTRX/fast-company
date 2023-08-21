@@ -59,6 +59,9 @@ const usersSlice = createSlice({
       state.auth = null
       state.isLoggedIn = false
       state.dataLoaded = false
+    },
+    userUpdated(state, action) {
+      state.entities = action.payload
     }
   }
 })
@@ -71,7 +74,8 @@ const {
   authRequestSuccess,
   authRequestFailed,
   userCreated,
-  userLoggedOut
+  userLoggedOut,
+  userUpdated
 } = actions
 
 const authRequested = createAction('users/authRequested')
@@ -159,6 +163,20 @@ export const getUserById = (id) => (state) => {
   if (state.users.entities) {
     return state.users.entities.find((user) => user._id === id)
   }
+}
+export const updateUser = (data) => async (dispatch, getState) => {
+  const { entities } = getState().users
+  try {
+    const { content } = await userService.update(data)
+    const newUsersEntities = entities.map((user) => {
+      if (user._id === content._id) {
+        return content
+      }
+      return user
+    })
+
+    dispatch(userUpdated(newUsersEntities))
+  } catch (error) {}
 }
 
 export const getIsLoggedIn = () => (state) => state.users.isLoggedIn

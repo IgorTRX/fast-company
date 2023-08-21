@@ -8,8 +8,7 @@ import {
   RadioField
 } from '../../common/form'
 import BackHistoryButton from '../../common/backButton'
-import { useAuth } from '../../../hooks/useAuth'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   getQualities,
   getQualitiesLoadingStatus
@@ -18,15 +17,15 @@ import {
   getProfessions,
   getProfessionsLoadingStatus
 } from '../../../store/professions'
-import { getCurrentUserData } from '../../../store/users'
+import { getCurrentUserData, updateUser } from '../../../store/users'
 
 const EditUserPage = () => {
+  const dispatch = useDispatch()
   const history = useHistory()
   const [data, setData] = useState()
   const [isLoading, setIsLoading] = useState(true)
   const [errors, setErrors] = useState({})
   const currentUser = useSelector(getCurrentUserData())
-  const { updateUserData } = useAuth()
 
   const qualities = useSelector(getQualities())
   const qualitiesLoading = useSelector(getQualitiesLoadingStatus())
@@ -77,15 +76,12 @@ const EditUserPage = () => {
     e.preventDefault()
     const isValid = validate()
     if (!isValid) return
-    try {
-      await updateUserData({
-        ...data,
-        qualities: data.qualities.map((qual) => qual.value)
-      })
-      history.push(`/users/${currentUser._id}`)
-    } catch (error) {
-      setErrors(error)
+    const newData = {
+      ...data,
+      qualities: data.qualities.map((qual) => qual.value)
     }
+    dispatch(updateUser(newData))
+    history.push(`/users/${currentUser._id}`)
   }
 
   const validatorConfig = {
