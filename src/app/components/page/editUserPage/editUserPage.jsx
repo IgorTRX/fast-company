@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { useHistory } from 'react-router-dom'
 import { validator } from '../../../utils/validator'
 import {
   TextField,
@@ -21,7 +20,6 @@ import { getCurrentUserData, updateUser } from '../../../store/users'
 
 const EditUserPage = () => {
   const dispatch = useDispatch()
-  const history = useHistory()
   const [data, setData] = useState()
   const [isLoading, setIsLoading] = useState(true)
   const [errors, setErrors] = useState({})
@@ -81,7 +79,6 @@ const EditUserPage = () => {
       qualities: data.qualities.map((qual) => qual.value)
     }
     dispatch(updateUser(newData))
-    history.push(`/users/${currentUser._id}`)
   }
 
   const validatorConfig = {
