@@ -1,5 +1,7 @@
 import { createAction, createSlice } from '@reduxjs/toolkit'
 import commentService from '../service/comment.service'
+import { nanoid } from 'nanoid'
+import { getCurrentUserId } from './users'
 
 const commentsSlice = createSlice({
   name: 'comments',
@@ -21,9 +23,6 @@ const commentsSlice = createSlice({
       state.isLoading = false
     },
     commentCreated(state, action) {
-      if (!Array.isArray(state.entities)) {
-        state.entities = []
-      }
       state.entities.push(action.payload)
     },
     commentRemoved(state, action) {
@@ -43,10 +42,8 @@ const {
   commentRemoved
 } = actions
 
-const commentCreateRequested = createAction('comments/commentCreateRequested')
-const createCommentFailed = createAction('comments/createCommentFailed')
-const commentRemoveRequested = createAction('comments/commentCreateRequested')
-const removeCommentFailed = createAction('comments/createCommentFailed')
+const addCommentRequested = createAction('comments/addCommentRequested')
+const removeCommentRequested = createAction('comments/removeCommentRequested')
 
 export const loadCommentsList = (userId) => async (dispatch) => {
   dispatch(commentsRequested())
@@ -58,23 +55,30 @@ export const loadCommentsList = (userId) => async (dispatch) => {
   }
 }
 
-export const createComment = (comment) => async (dispatch) => {
-  dispatch(commentCreateRequested())
+export const createComment = (payload) => async (dispatch, getState) => {
+  dispatch(addCommentRequested())
+  const comment = {
+    ...payload,
+    _id: nanoid(),
+    created_at: Date.now(),
+    userId: getCurrentUserId()(getState())
+  }
+  console.log(comment)
   try {
     const { content } = await commentService.createComment(comment)
     dispatch(commentCreated(content))
   } catch (error) {
-    dispatch(createCommentFailed())
+    dispatch(commentsRequestFailed())
   }
 }
 
-export const removeComment = (id) => async (dispatch) => {
-  dispatch(commentRemoveRequested())
+export const removeComment = (commentId) => async (dispatch) => {
+  dispatch(removeCommentRequested())
   try {
-    const { content } = await commentService.removeComment(id)
-    if (content === null) dispatch(commentRemoved(id))
+    const { content } = await commentService.removeComment(commentId)
+    if (content === null) dispatch(commentRemoved(commentId))
   } catch (error) {
-    dispatch(removeCommentFailed())
+    dispatch(commentsRequestFailed())
   }
 }
 
